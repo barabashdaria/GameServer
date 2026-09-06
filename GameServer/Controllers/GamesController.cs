@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using GameServer.Requests;
 
 namespace GameServer.Controllers
 {
@@ -22,10 +23,10 @@ namespace GameServer.Controllers
 
         [HttpPost]
         [Route("games")]
-        public IEnumerable<Game> PostGame(Game addGame)
+        public IEnumerable<Game> PostGame(Game addGameParametr)
         {
-            addGame.Id = Guid.NewGuid();
-            GameList.Add(addGame);
+            addGameParametr.Id = Guid.NewGuid();
+            GameList.Add(addGameParametr);
             return GameList;
         }
 
@@ -33,10 +34,29 @@ namespace GameServer.Controllers
         [Route("games/{Id}")]
         public IEnumerable<Game> DeleteGame(Guid Id)
         {
-            Game foundGame = GameList.SingleOrDefault(x => x.Id == Id);
+            Game foundGame = GameList.SingleOrDefault(game => game.Id == Id);
             if (foundGame != null)
                 GameList.Remove(foundGame);
             return GameList;
+        }
+
+        [HttpPut]
+        [Route("games/{Id}")]
+        public ActionResult PutGame(PutGameRequest gameParametr, Guid Id)
+        {
+            Game foundGame = GameList.SingleOrDefault(x => x.Id == Id);
+            if (foundGame == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                foundGame.Ganre = gameParametr.Ganre;
+                foundGame.Name = gameParametr.Name;
+                foundGame.Year = gameParametr.Year;
+                foundGame.Score = gameParametr.Score;
+                return Ok(foundGame);
+            }
         }
     }
 }
