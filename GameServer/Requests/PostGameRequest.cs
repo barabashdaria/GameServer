@@ -1,12 +1,10 @@
-﻿namespace GameServer
+﻿namespace GameServer.Requests
 {
-    public class Game
+    public class PostGameRequest
     {
         public string Name { get; set; }
         public int Year { get; set; }
-        public Ganre Ganre { get; set; }
+        public string Ganre { get; set; }
         public float Score { get; set; }
-        public Guid Id { get; set; }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using GameServer.Requests;
+using GameServer.Helpers;
 
 namespace GameServer.Controllers
 {
@@ -23,11 +24,32 @@ namespace GameServer.Controllers
 
         [HttpPost]
         [Route("games")]
-        public IEnumerable<Game> PostGame(Game addGameParametr)
+        public ActionResult PostGame(PostGameRequest addGameParametr)
         {
-            addGameParametr.Id = Guid.NewGuid();
-            GameList.Add(addGameParametr);
-            return GameList;
+            string smallName = addGameParametr.Name.ToLower();
+
+            Game[] foundgames = GameList.Where(game => game.Name.ToLower() == smallName).ToArray();
+
+            if (foundgames == null || foundgames.Length == 0 ) {
+                Game game = new Game();
+                game.Name = addGameParametr.Name;
+                try
+                {
+                    game.Ganre = StringHelpers.StringToGanre(addGameParametr.Ganre);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Not supported ganre");
+                }
+                game.Year = addGameParametr.Year;
+                game.Score = addGameParametr.Score;
+                game.Id = Guid.NewGuid();
+                GameList.Add(game);
+                return Ok(GameList);
+            }
+            else {
+                return Conflict();
+            }
         }
 
         [HttpDelete]
@@ -51,7 +73,14 @@ namespace GameServer.Controllers
             }
             else
             {
-                foundGame.Ganre = gameParametr.Ganre;
+                try
+                {
+                    foundGame.Ganre = StringHelpers.StringToGanre(gameParametr.Ganre);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Not supported ganre");
+                }
                 foundGame.Name = gameParametr.Name;
                 foundGame.Year = gameParametr.Year;
                 foundGame.Score = gameParametr.Score;
