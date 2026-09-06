@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GameServer.Requests;
 using GameServer.Helpers;
+using GameServer.Responses;
 
 namespace GameServer.Controllers
 {
@@ -17,9 +18,21 @@ namespace GameServer.Controllers
 
         [HttpGet]
         [Route("games")]
-        public IEnumerable<Game> GetGames()
+        public List<GetGameResponse> GetGames()
         {
-            return GameList;
+            List <GetGameResponse> response = new List<GetGameResponse>();
+            for (int i = 0; i < GameList.Count; i++)
+            {
+                GetGameResponse gameResponse = new GetGameResponse();
+                Game game = GameList[i];
+                gameResponse.Name = game.Name;
+                gameResponse.Year = game.Year;
+                gameResponse.Score = game.Score;
+                gameResponse.Ganre = StringHelpers.GanreToString(game.Ganre);
+                gameResponse.Id = game.Id;
+                response.Add(gameResponse);
+            }
+            return response;
         }
 
         [HttpPost]
@@ -45,7 +58,13 @@ namespace GameServer.Controllers
                 game.Score = addGameParametr.Score;
                 game.Id = Guid.NewGuid();
                 GameList.Add(game);
-                return Ok(GameList);
+                PostGameResponse response = new PostGameResponse();
+                response.Name = game.Name;
+                response.Year = game.Year;
+                response.Score = game.Score;
+                response.Ganre = StringHelpers.GanreToString(game.Ganre);
+                response.Id = game.Id;
+                return Ok(response);
             }
             else {
                 return Conflict();
@@ -84,7 +103,13 @@ namespace GameServer.Controllers
                 foundGame.Name = gameParametr.Name;
                 foundGame.Year = gameParametr.Year;
                 foundGame.Score = gameParametr.Score;
-                return Ok(foundGame);
+                PutGameResponse response = new PutGameResponse();
+                response.Name = foundGame.Name;
+                response.Year = foundGame.Year;
+                response.Score = foundGame.Score;
+                response.Ganre = StringHelpers.GanreToString(foundGame.Ganre);
+                response.Id = foundGame.Id;
+                return Ok(response);
             }
         }
     }

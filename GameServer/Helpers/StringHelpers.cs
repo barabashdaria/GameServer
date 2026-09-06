@@ -4,7 +4,8 @@ namespace GameServer.Helpers
 {
     public class StringHelpers
     {
-        public static Ganre StringToGanre(string str) {
+        public static Ganre StringToGanre(string str) 
+        {
             string smallGanre = str.ToLower();
             if (smallGanre == "shooter")
             {
@@ -22,6 +23,22 @@ namespace GameServer.Helpers
             {
                 throw new Exception("Not supported ganre");
             }
+        }
+        public static string GanreToString(Ganre ganre)
+        {
+            if(ganre == Ganre.Shooter)
+            {
+                return "Shooter";
+            }
+            if (ganre == Ganre.RPG)
+            {
+                return "RPG";
+            }
+            if (ganre == Ganre.Racing)
+            {
+                return "Racing";
+            }
+            throw new Exception("Not supported ganre");
         }
     }
 }
